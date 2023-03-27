@@ -6,11 +6,11 @@ A ideia do projeto é conseguir constuir um grafo de relações extraídos da Wi
 Formato:
 
 
-| Itens
+| Items
 
 | |  Coocking
 
-| Pessoas
+| People
 
-| Locais
+| Places
 

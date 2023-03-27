@@ -1,8 +1,4 @@
-import os
-import sys
-
-#import all files in the stars directory
-for file in os.listdir(os.path.dirname(__file__)):
-    if file.endswith(".py"):
-        __import__(file[:-3])
-        
+#import all subdirectories
+from . import items
+from . import people
+from . import places
