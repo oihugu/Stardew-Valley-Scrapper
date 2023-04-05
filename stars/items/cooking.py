@@ -14,10 +14,23 @@ def ectract_ingredients(line):
 # Extract Buffs from a line in the infobox, returning a dict with the buff name and the buff value
 def extract_buffs(line):
     buffs = {}
-    _text = line.text.replace('Buff(s)','').replace('\xa0', '').replace('\n', '').replace('\t', '').strip()
-    _text = regex.search(r'(.*)\(([+-][0-9])\)', _text)
-    buffs[_text[1]] = _text[2]
+    
+    _text = line.text.replace('Buff(s)','').replace('\xa0', '').replace('\n', '').replace('\t', '').replace(' ', '').strip()
+    for item in regex.findall(r'([A-z]+)\(([+-][0-9]+)\)', _text):
+        buffs[item[0]] = item[1]
     return buffs
+
+def extract_time(line):
+    time = {}
+
+    _text = line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '').replace(' ', '').strip()
+    r_text = regex.search(r'([0-9]+h)?([0-9]+m)?([0-9]+s)?', _text)
+
+    for a in range(1, len(r_text)):
+        if r_text[a] != None:
+            time[r_text[a][-1]] = r_text[a][:-1]
+    
+    return time
 
 def extract_recipe_source(line):
     multiple_sources = []
@@ -52,8 +65,19 @@ def extract_recipe_source(line):
                 recipe_source['Font'] = 'Stardrop Saloon'
                 recipe_source['Price'] = r_text.group(1) + 'g'
 
+            if 'Island Trader' in source.strip():
+                itens = {}
+                source = source.strip()
+                r_text = regex.search(r'Island Trader for (.*)', source)
+                r_text = r_text.group(1)
+                
+                for item in regex.findall(r'([A-z]+ ?[A-z]+? ?[A-z]+?) ?\(([0-9]+)\)', _text):
+                    itens[item[0]] = item[1]
+
+                recipe_source['Font'] = 'Island Trader'
+                recipe_source['Itens'] = itens
+
             if recipe_source != {}:
                 multiple_sources.append(recipe_source)
 
     return multiple_sources
-    

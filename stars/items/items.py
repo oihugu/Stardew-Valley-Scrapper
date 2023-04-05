@@ -20,14 +20,17 @@ def extract_text_before_image(line):
 
 # Utilizes dynamicaly other functions to extract the data from the infobox
 def extract_food_dynamic(data, line):
-    section = line.find('td', {'id': 'infoboxsection'}).text.replace('\n', '')
-
+    section = line.find('td', {'id': 'infoboxsection'}).text.replace('\n', '').strip()
+    
     if section == 'Ingredients':
         return ectract_ingredients(line)
     
     elif section == 'Buff(s)':
         return extract_buffs(line)
     
+    elif section == 'Buff Duration':
+        return extract_time(line)
+
     elif section in ['Energy / Health', 'Qi Seasoning']:
         ext = extract_text_before_image(line)
         if section == 'Qi Seasoning' and data['name'] in ext.keys():
@@ -39,13 +42,13 @@ def extract_food_dynamic(data, line):
         return extract_recipe_source(line)
 
     else:
-        return line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '')
+        return line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '').strip()
 
 def extract_dynamic(data, line):
     if 'Source' not in data['lines'].keys():
-        return line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '')
+        return [a.strip() for a in line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '').split('•')]
     
-    elif data['lines']['Source'] == 'Cooking':
+    elif 'Cooking' in data['lines']['Source']:
         return extract_food_dynamic(data, line)
     
     else:
