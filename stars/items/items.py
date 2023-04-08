@@ -19,10 +19,11 @@ def extract_text_before_image(line):
                 ap[image_] = text
     return ap
 
+
 # Utilizes dynamicaly other functions to extract the data from the infobox
 def extract_food_dynamic(data, line):
     section = line.find('td', {'id': 'infoboxsection'}).text.replace('\n', '').strip()
-    
+
     if section == 'Ingredients':
         return ectract_ingredients(line)
     
@@ -59,12 +60,7 @@ def extract_generic_dynamic(data, line):
 def extract_dynamic(data, line):
 
     if 'Source' not in data['lines'].keys():
-
-        if line.find('td', {'id': 'infoboxdetail'}) != None:
-            info_detail = line.find('td', {'id': 'infoboxdetail'})
-            return [a.strip() for a in info_detail.text.replace('\xa0', '').replace('\n', '').replace('\t', '').split('•')]
-        
-        return None
+        return utils.extract_source(data, line)
         
     elif 'Recipes' in data['hyper_class']:
         return extract_food_dynamic(data, line)
