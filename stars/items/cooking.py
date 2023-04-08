@@ -3,11 +3,22 @@ import regex
 # Extract the ingredients of a recipe in a infobox line, returning a list of lists with the name of the ingredient and the quantity
 def ectract_ingredients(line):
     ingredients = {}
+    holder = ''
     for a in (line.find('td', {'id': 'infoboxdetail'})):
         if len(a) > 1:
             _text = a.text.replace('\xa0', '').replace('\n', '').replace('\t', '').strip()
-            _text = regex.search(r'(.*)\(([0-9])\)', _text)
-            ingredients[_text[1]] = _text[2]
+            
+            if _text  == 'Any':
+                holder = 'Any Fish'
+                continue
+
+            _text = regex.search(r'(.*)\(([0-9]+)\)', _text)
+            
+            if holder != '':
+                ingredients[holder + _text[1]] = _text[2]    
+                holder = ''
+            else:
+                ingredients[_text[1]] = _text[2]
     return ingredients
 
 

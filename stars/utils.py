@@ -1,8 +1,16 @@
 import regex
+import requests as re
+
+def request_and_cache(url, cache):
+    if url in cache:
+        return cache[url]
+    else:
+        response = re.get(url)
+        cache[url] = response
+        return response
 
 def extract_cost(line):
-    _text = line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '').strip()
-    print(_text)
+    _text = line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '').replace(',', '').replace('.', '').strip()
     _text = regex.search(r'([0-9]+)g', _text)
     return _text.group(1) + 'g'
 

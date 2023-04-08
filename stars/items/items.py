@@ -41,15 +41,15 @@ def extract_food_dynamic(data, line):
 
     elif section == 'Recipe Source(s)':
         return extract_recipe_source(line)
+    
+    elif section == 'Sell Price':
+        return utils.extract_cost(line)
 
     else:
         return line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '').strip()
 
 def extract_generic_dynamic(data, line):
-    print(1)
     section = line.find('td', {'id': 'infoboxsection'}).text.replace('\n', '').strip()
-
-    print(section)
 
     if section == 'Cost:':
         return utils.extract_cost(line)
@@ -66,7 +66,7 @@ def extract_dynamic(data, line):
         
         return None
         
-    elif 'Cooking' in data['lines']['Source']:
+    elif 'Recipes' in data['hyper_class']:
         return extract_food_dynamic(data, line)
     
     elif None in data['lines']['Source']:
