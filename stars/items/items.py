@@ -1,4 +1,5 @@
 from .cooking import * 
+from .. import utils
 import regex
 
 # Extract the text that are before some image, placing the text in the key of an dictionary and the image name as the value
@@ -29,7 +30,7 @@ def extract_food_dynamic(data, line):
         return extract_buffs(line)
     
     elif section == 'Buff Duration':
-        return extract_time(line)
+        return utils.extract_time(line)
 
     elif section in ['Energy / Health', 'Qi Seasoning']:
         ext = extract_text_before_image(line)
@@ -44,12 +45,32 @@ def extract_food_dynamic(data, line):
     else:
         return line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '').strip()
 
+def extract_generic_dynamic(data, line):
+    print(1)
+    section = line.find('td', {'id': 'infoboxsection'}).text.replace('\n', '').strip()
+
+    print(section)
+
+    if section == 'Cost:':
+        return utils.extract_cost(line)
+
+    return line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '').strip()
+
 def extract_dynamic(data, line):
+
     if 'Source' not in data['lines'].keys():
-        return [a.strip() for a in line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '').split('•')]
-    
+
+        if line.find('td', {'id': 'infoboxdetail'}) != None:
+            info_detail = line.find('td', {'id': 'infoboxdetail'})
+            return [a.strip() for a in info_detail.text.replace('\xa0', '').replace('\n', '').replace('\t', '').split('•')]
+        
+        return None
+        
     elif 'Cooking' in data['lines']['Source']:
         return extract_food_dynamic(data, line)
     
+    elif None in data['lines']['Source']:
+        return extract_generic_dynamic(data, line)
+
     else:
         return line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '')

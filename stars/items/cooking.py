@@ -20,18 +20,6 @@ def extract_buffs(line):
         buffs[item[0]] = item[1]
     return buffs
 
-def extract_time(line):
-    time = {}
-
-    _text = line.find('td', {'id': 'infoboxdetail'}).text.replace('\xa0', '').replace('\n', '').replace('\t', '').replace(' ', '').strip()
-    r_text = regex.search(r'([0-9]+h)?([0-9]+m)?([0-9]+s)?', _text)
-
-    for a in range(1, len(r_text)):
-        if r_text[a] != None:
-            time[r_text[a][-1]] = r_text[a][:-1]
-    
-    return time
-
 def extract_recipe_source(line):
     multiple_sources = []
     _text = line.text.replace('Recipe Source(s)', '').replace('\xa0', '').replace('\t', '').strip()
